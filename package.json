@@ -1,0 +1,28 @@
+{
+  "name": "jeve",
+  "version": "0.0.0",
+  "description": "Quick way to REST",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jack-carling/jeve.git"
+  },
+  "keywords": [],
+  "author": "Jack Carling",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jack-carling/jeve/issues"
+  },
+  "homepage": "https://github.com/jack-carling/jeve#readme",
+  "dependencies": {
+    "express": "4.18.1",
+    "mongoose": "6.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "2.0.19"
+  }
+}
