@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/jack-carling/jeve#readme",
   "dependencies": {
+    "chalk": "4.1.2",
     "express": "4.18.1",
     "mongoose": "6.5.0"
   },
