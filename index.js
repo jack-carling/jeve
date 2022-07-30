@@ -1,10 +1,14 @@
 const express = require('express');
 const chalk = require('chalk');
+const mongoose = require('mongoose');
 const app = express();
+
+const { handleRouteParamError, handleRouteParamSuccess } = require('./route');
 
 class Jeve {
   constructor(settings) {
     this.settings = settings;
+    this.models = {};
   }
 
   // Logs
@@ -22,7 +26,16 @@ class Jeve {
   }
 
   // Validation
-  validType(variable, name, type, error = false) {
+  validTypeLog(variable, name, type, error = false) {
+    const valid = this.validType(variable, type);
+    if (!valid && error) {
+      this.error(`${name} needs to be "${type}"`);
+    } else if (!valid) {
+      this.warning(`${name} needs to be "${type}"`);
+    }
+    return valid;
+  }
+  validType(variable, type) {
     let valid;
     switch (type) {
       case 'string':
@@ -40,22 +53,29 @@ class Jeve {
       case 'array':
         valid = variable instanceof Array;
         break;
+      case 'objectid':
+        valid = mongoose.isValidObjectId(variable);
+        break;
       default:
         valid = false;
         break;
-    }
-    if (!valid && !error) {
-      this.warning(`${name} needs to be "${type}"`);
-    } else if (!valid) {
-      this.error(`${name} needs to be "${type}"`);
     }
     return valid;
   }
 
   // Run
   async run() {
-    const port = this.settings?.port ?? 5000;
-    if (!this.validType(port, 'port', 'number', true)) return;
+    if (!this.settings) return this.error('missing settings');
+    const port = this.settings.port ?? 5000;
+    if (!this.validTypeLog(port, 'port', 'number', true)) return;
+    const database = this.settings.database ?? 'mongodb://127.0.0.1:27017/';
+    if (!this.validTypeLog(database, 'database', 'string', true)) return;
+    try {
+      await mongoose.connect(database);
+      this.success('connected to database');
+    } catch (e) {
+      return this.error(e);
+    }
     this.success('initializing...');
     this.initialize();
     app.listen(port, () => {
@@ -65,14 +85,13 @@ class Jeve {
 
   // Initialization
   initialize() {
-    if (!this.settings) return this.warning('missing settings');
     const domain = this.settings.domain;
-    if (!this.validType(domain, 'domain', 'object')) return;
+    if (!this.validTypeLog(domain, 'domain', 'object')) return;
     for (const d in domain) {
-      if (!this.validType(domain[d], `domain.${d}`, 'object')) break;
+      if (!this.validTypeLog(domain[d], `domain.${d}`, 'object')) break;
 
       const resourceMethods = this.settings.domain[d].resourceMethods ?? ['GET'];
-      if (!this.validType(resourceMethods, `domain.${d}.resourceMethods`, 'array')) break;
+      if (!this.validTypeLog(resourceMethods, `domain.${d}.resourceMethods`, 'array')) break;
       if (!resourceMethods.length) {
         this.warning(`domain.${d}.resourceMethods is empty, defaults to "GET"`);
         resourceMethods.push('GET');
@@ -87,17 +106,27 @@ class Jeve {
       }
 
       const schema = this.settings.domain[d].schema;
-      if (!this.validType(schema, `domain.${d}.schema`, 'object')) break;
+      if (!this.validTypeLog(schema, `domain.${d}.schema`, 'object')) break;
     }
   }
 
   // Create Routes
   createRoute(route, domain) {
-    app[route](`/${domain}`, (req, res) => {
-      res.send(domain);
+    app.param('id', (req, res, next, value) => {
+      if (this.validType(value, 'objectid')) {
+        this.handleRouteParamSuccess(res, domain, value);
+      } else {
+        this.handleRouteParamError(res, domain, value);
+      }
+    });
+    app[route](`/${domain}/:id?`, (req, res) => {
+      res.json({ resource: domain });
     });
   }
 }
+
+Jeve.prototype.handleRouteParamError = handleRouteParamError;
+Jeve.prototype.handleRouteParamSuccess = handleRouteParamSuccess;
 
 const settings = {
   domain: {
