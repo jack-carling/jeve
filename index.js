@@ -3,7 +3,7 @@ const chalk = require('chalk');
 const mongoose = require('mongoose');
 const app = express();
 
-const { handleRouteParamError, handleRouteParamSuccess } = require('./route');
+const { validateParam } = require('./route');
 
 class Jeve {
   constructor(settings) {
@@ -113,20 +113,19 @@ class Jeve {
   // Create Routes
   createRoute(route, domain) {
     app.param('id', (req, res, next, value) => {
-      if (this.validType(value, 'objectid')) {
-        this.handleRouteParamSuccess(res, domain, value);
-      } else {
-        this.handleRouteParamError(res, domain, value);
+      const validation = this.validateParam(req.method, value);
+      if (!validation.success) {
+        return res.status(400).json({ _success: validation.success, _message: validation.message });
       }
+      next();
     });
     app[route](`/${domain}/:id?`, (req, res) => {
-      res.json({ resource: domain });
+      res.json({ resource: domain, params: req.params });
     });
   }
 }
 
-Jeve.prototype.handleRouteParamError = handleRouteParamError;
-Jeve.prototype.handleRouteParamSuccess = handleRouteParamSuccess;
+Jeve.prototype.validateParam = validateParam;
 
 const settings = {
   domain: {
