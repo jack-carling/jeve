@@ -3,7 +3,11 @@ const chalk = require('chalk');
 const mongoose = require('mongoose');
 const app = express();
 
-const { validateParam } = require('./route');
+app.use(express.json());
+app.set('etag', false);
+
+const { validateParam, handlePost, handleGet } = require('./route');
+const { createModelForName } = require('./models');
 
 class Jeve {
   constructor(settings) {
@@ -42,7 +46,7 @@ class Jeve {
         valid = typeof variable === 'string';
         break;
       case 'number':
-        valid = typeof variable === 'number';
+        valid = typeof Number(variable) === 'number' && !Number.isNaN(Number(variable));
         break;
       case 'object':
         valid = typeof variable === 'object' && !(variable instanceof Array) && variable !== null;
@@ -61,6 +65,11 @@ class Jeve {
         break;
     }
     return valid;
+  }
+
+  // Check empty object
+  isEmptyObject(object) {
+    return Object.keys(object).length === 0;
   }
 
   // Run
@@ -107,6 +116,7 @@ class Jeve {
 
       const schema = this.settings.domain[d].schema;
       if (!this.validTypeLog(schema, `domain.${d}.schema`, 'object')) break;
+      this.createModelForName(d);
     }
   }
 
@@ -120,12 +130,21 @@ class Jeve {
       next();
     });
     app[route](`/${domain}/:id?`, (req, res) => {
-      res.json({ resource: domain, params: req.params });
+      if (req.method === 'GET') {
+        this.handleGet(req, res, domain);
+      } else if (req.method === 'POST') {
+        this.handlePost(req, res, domain);
+      } else {
+        res.status(501).json({ _success: true });
+      }
     });
   }
 }
 
 Jeve.prototype.validateParam = validateParam;
+Jeve.prototype.handleGet = handleGet;
+Jeve.prototype.handlePost = handlePost;
+Jeve.prototype.createModelForName = createModelForName;
 
 const settings = {
   domain: {
