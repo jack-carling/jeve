@@ -46,7 +46,7 @@ class Jeve {
         valid = typeof variable === 'string';
         break;
       case 'number':
-        valid = typeof Number(variable) === 'number' && !Number.isNaN(Number(variable));
+        valid = typeof Number(variable) === 'number' && !Number.isNaN(Number.parseInt(variable, 10));
         break;
       case 'object':
         valid = typeof variable === 'object' && !(variable instanceof Array) && variable !== null;
@@ -105,6 +105,9 @@ class Jeve {
         this.warning(`domain.${d}.resourceMethods is empty, defaults to "GET"`);
         resourceMethods.push('GET');
       }
+      const schema = this.settings.domain[d].schema;
+      const validSchema = this.validTypeLog(schema, `domain.${d}.schema`, 'object');
+      if (!validSchema || this.isEmptyObject(schema)) break;
       for (const r of resourceMethods) {
         const validResourceMethods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
         if (!validResourceMethods.includes(r.toUpperCase())) {
@@ -113,9 +116,6 @@ class Jeve {
         }
         this.createRoute(r.toLowerCase(), d);
       }
-
-      const schema = this.settings.domain[d].schema;
-      if (!this.validTypeLog(schema, `domain.${d}.schema`, 'object')) break;
       this.createModelForName(d);
     }
   }
@@ -150,7 +150,13 @@ const settings = {
   domain: {
     people: {
       resourceMethods: ['GET', 'POST'],
-      schema: {},
+      schema: {
+        name: {
+          type: 'string',
+          required: true,
+        },
+        age: 'number',
+      },
     },
   },
 };
