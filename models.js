@@ -16,6 +16,8 @@ function createModelForName(name) {
     for (const issue of issues) {
       this.warning(issue);
     }
+    this.warning(`failed to create Mongoose schema for ${name}`);
+    return;
   }
 
   const mongooseSchema = new mongoose.Schema(computedSchema, {
@@ -31,32 +33,59 @@ function createModelForName(name) {
 function generateSchema(schema, name) {
   const computed = {};
   const issues = [];
+  let issue = '';
 
   for (const s in schema) {
+    let dottedPath = `${name}.schema.${s}`;
     if (typeof schema[s] === 'object' && !(schema[s] instanceof Array) && schema[s] !== null) {
-      const obj = {};
-      for (const c in schema[s]) {
-        const validKeys = ['required', 'type'];
-        if (!validKeys.includes(c)) {
-          issues.push(`Path \`${name}.${s}\` contains invalid key (${c}).`);
-          continue;
-        }
-        if (c === 'type') {
-          obj[c] = typeToMongooseSchemaType(schema[s][c]);
-        } else {
-          obj[c] = schema[s][c];
-        }
+      [computed[s], issue] = handleObject(schema[s], dottedPath);
+      if (issue) {
+        issues.push(issue);
+        issue = null;
       }
-      computed[s] = obj;
     } else {
-      if (validateType(schema[s])) computed[s] = typeToMongooseSchemaType(schema[s]);
+      [computed[s], issue] = handleObjectValue(s, schema[s], dottedPath);
+      if (issue) {
+        issues.push(issue);
+        issue = null;
+      }
     }
   }
 
   return [computed, issues];
 }
 
+function handleObject(schema, dottedPath, obj = {}, issues = []) {
+  let issue = null;
+  for (const s in schema) {
+    if (typeof schema[s] === 'object' && !(schema[s] instanceof Array) && schema[s] !== null) {
+      dottedPath += `.${s}`;
+      [obj[s], issue] = handleObject(schema[s], dottedPath);
+    } else {
+      const finalDottedPath = `${dottedPath}.${s}`;
+      [obj[s], issue] = handleObjectValue(s, schema[s], finalDottedPath);
+    }
+  }
+
+  return [obj, issue];
+}
+
+function handleObjectValue(key, value, finalDottedPath) {
+  const validKeys = ['required', 'type'];
+  if (!validKeys.includes(key)) {
+    if (validateType(value)) return [{ type: typeToMongooseSchemaType(value) }, null];
+    return [{}, `path \`${finalDottedPath}\` contains invalid value (${value}).`];
+  }
+  if (key === 'type') {
+    if (validateType(value)) return [typeToMongooseSchemaType(value), null];
+    return [{}, `path \`${finalDottedPath}\` contains invalid value (${value}).`];
+  } else {
+    return [value, null];
+  }
+}
+
 function validateType(type) {
+  if (typeof type !== 'string') return false;
   type = type.toLowerCase();
   const validTypes = ['string', 'number', 'date', 'boolean', 'objectid', 'array'];
   if (validTypes.includes(type)) return true;
