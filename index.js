@@ -154,12 +154,10 @@ const settings = {
         name: {
           type: 'string',
           required: true,
+          unique: true,
         },
         age: 'number',
         hobbies: [{ name: 'string' }],
-        favorites: {
-          food: [{ dish: 'string' }],
-        },
       },
     },
   },

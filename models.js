@@ -26,6 +26,7 @@ function createModelForName(name) {
       updatedAt: '_updated',
     },
     versionKey: false,
+    collection: name,
   });
   this.models[name] = mongoose.model(name, mongooseSchema);
 }
@@ -65,17 +66,18 @@ function generateSchema(schema, name) {
   return [computed, issues];
 }
 
-function handleObject(schema, dottedPath, obj = {}, issues = []) {
+function handleObject(schema, dottedPath) {
   let issue = null;
+  const obj = {};
   for (const s in schema) {
     if (typeof schema[s] === 'object' && !(schema[s] instanceof Array) && schema[s] !== null) {
       dottedPath += `.${s}`;
       [obj[s], issue] = handleObject(schema[s], dottedPath);
     } else if (schema[s] instanceof Array) {
       if (!schema[s].length) {
-        issues.push(`path \`${dottedPath}\` is an empty array, use \`{type, 'array', default: []}\` instead.`);
+        issue = `path \`${dottedPath}\` is an empty array, use \`{type, 'array', default: []}\` instead.`;
       } else if (schema[s].length !== 1) {
-        issues.push(`path \`${dottedPath}\` is defined as an array, should only contain one (1) object.`);
+        issue = `path \`${dottedPath}\` is defined as an array, should only contain one (1) object.`;
       } else {
         let result;
         [result, issue] = handleObject(schema[s][0], dottedPath);
@@ -85,13 +87,14 @@ function handleObject(schema, dottedPath, obj = {}, issues = []) {
       const finalDottedPath = `${dottedPath}.${s}`;
       [obj[s], issue] = handleObjectValue(s, schema[s], finalDottedPath);
     }
+    if (issue) break;
   }
 
   return [obj, issue];
 }
 
 function handleObjectValue(key, value, finalDottedPath) {
-  const validKeys = ['required', 'type'];
+  const validKeys = ['required', 'type', 'unique'];
   if (!validKeys.includes(key)) {
     if (validateType(value)) return [{ type: typeToMongooseSchemaType(value) }, null];
     return [{}, `path \`${finalDottedPath}\` contains invalid value (${value}).`];
@@ -99,8 +102,9 @@ function handleObjectValue(key, value, finalDottedPath) {
   if (key === 'type') {
     if (validateType(value)) return [typeToMongooseSchemaType(value), null];
     return [{}, `path \`${finalDottedPath}\` contains invalid value (${value}).`];
-  } else {
-    return [value, null];
+  } else if (['required', 'unique'].includes(key)) {
+    if (value === true || value === false) return [value, null];
+    return [{}, `path \`${finalDottedPath}\` contains invalid boolean (${value}).`];
   }
 }
 

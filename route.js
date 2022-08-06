@@ -82,6 +82,11 @@ async function handlePost(req, res, domain) {
   } catch (e) {
     if (e.name === 'ValidationError') {
       issues = Object.values(e.errors).map((value) => value.message);
+    } else if (e.code === 11000) {
+      const key = Object.keys(e.keyPattern)[0];
+      issues.push(`Path \`${key}\` value (${e.keyValue[key]}) is not unique.`);
+    } else {
+      issues.push(e);
     }
   } finally {
     if (issues.length) {
