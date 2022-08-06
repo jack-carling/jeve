@@ -156,6 +156,10 @@ const settings = {
           required: true,
         },
         age: 'number',
+        hobbies: [{ name: 'string' }],
+        favorites: {
+          food: [{ dish: 'string' }],
+        },
       },
     },
   },

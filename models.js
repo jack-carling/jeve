@@ -43,6 +43,16 @@ function generateSchema(schema, name) {
         issues.push(issue);
         issue = null;
       }
+    } else if (schema[s] instanceof Array) {
+      if (!schema[s].length) {
+        issues.push(`path \`${dottedPath}\` is an empty array, use \`{type, 'array', default: []}\` instead.`);
+      } else if (schema[s].length !== 1) {
+        issues.push(`path \`${dottedPath}\` is defined as an array, should only contain one (1) object.`);
+      } else {
+        let result;
+        [result, issue] = handleObject(schema[s][0], dottedPath);
+        computed[s] = [result];
+      }
     } else {
       [computed[s], issue] = handleObjectValue(s, schema[s], dottedPath);
       if (issue) {
@@ -61,6 +71,16 @@ function handleObject(schema, dottedPath, obj = {}, issues = []) {
     if (typeof schema[s] === 'object' && !(schema[s] instanceof Array) && schema[s] !== null) {
       dottedPath += `.${s}`;
       [obj[s], issue] = handleObject(schema[s], dottedPath);
+    } else if (schema[s] instanceof Array) {
+      if (!schema[s].length) {
+        issues.push(`path \`${dottedPath}\` is an empty array, use \`{type, 'array', default: []}\` instead.`);
+      } else if (schema[s].length !== 1) {
+        issues.push(`path \`${dottedPath}\` is defined as an array, should only contain one (1) object.`);
+      } else {
+        let result;
+        [result, issue] = handleObject(schema[s][0], dottedPath);
+        obj[s] = [result];
+      }
     } else {
       const finalDottedPath = `${dottedPath}.${s}`;
       [obj[s], issue] = handleObjectValue(s, schema[s], finalDottedPath);
