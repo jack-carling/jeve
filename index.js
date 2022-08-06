@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const chalk = require('chalk');
 const mongoose = require('mongoose');
@@ -75,9 +76,9 @@ class Jeve {
   // Run
   async run() {
     if (!this.settings) return this.error('missing settings');
-    const port = this.settings.port ?? 5000;
+    const port = (process.env.PORT || this.settings.port) ?? 5000;
     if (!this.validTypeLog(port, 'port', 'number', true)) return;
-    const database = this.settings.database ?? 'mongodb://127.0.0.1:27017/';
+    const database = (process.env.DATABASE || this.settings.database) ?? 'mongodb://localhost';
     if (!this.validTypeLog(database, 'database', 'string', true)) return;
     try {
       await mongoose.connect(database);
@@ -88,7 +89,7 @@ class Jeve {
     this.success('initializing...');
     this.initialize();
     app.listen(port, () => {
-      this.success('running on port ' + port);
+      this.success(`running on port ${port}`);
     });
   }
 
@@ -154,10 +155,8 @@ const settings = {
         name: {
           type: 'string',
           required: true,
-          unique: true,
         },
         age: 'number',
-        hobbies: [{ name: 'string' }],
       },
     },
   },
