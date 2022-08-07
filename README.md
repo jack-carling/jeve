@@ -185,3 +185,76 @@ Now our first successful **POST** was made!
 ```
 
 By default only **GET** methods are allowed unless an array of `resourceMethods` have been defined. If however, you'd like an endpoint only serving **POST** requests, simply add that as the single value to the array.
+
+## Params & Queries
+
+If we make a new request to `/people` we now get the everything that's stored in the database.
+
+```
+$ curl -i http://localhost:5000/people
+HTTP/1.1 200 OK
+```
+
+```json
+{
+  "_success": true,
+  "_items": [
+    {
+      "_id": "62eebccf0c5aa6efc2d8ceed",
+      "name": "James Smith",
+      "_created": "2022-08-06T19:11:11.627Z",
+      "_updated": "2022-08-06T19:11:11.627Z"
+    }
+  ],
+  "_meta": {
+    "total": 1,
+    "limit": 10,
+    "page": 1,
+    "pages": 1
+  }
+}
+```
+
+In our case the `_items` array only contains one (1) object, the one we just added. Responses are paginated by default and the `_meta` object contains information about the specific endpoint.
+
+| \_meta |  description                              |
+| ------ | ----------------------------------------- |
+| total  | The total number of documents found       |
+| limit  | Max results per page                      |
+| page   | The page which the cursor is currently on |
+| pages  | The total number of pages                 |
+
+If we imagined that we had 12 documents in the `/people` collection the `_meta` response would look something like this:
+
+```json
+{
+  "_success": true,
+  "_items": [ ... ],
+  "_meta": {
+    "total": 12,
+    "limit": 10,
+    "page": 1,
+    "pages": 2
+  }
+}
+```
+
+Since we know there's a second page, we can simply do a new **GET** with the page query:
+
+```
+$ curl -i "http://localhost:5000/people?page=2"
+HTTP/1.1 200 OK
+```
+
+If we wanted more results per page:
+
+```
+$ curl -i "http://localhost:5000/people?limit=20"
+HTTP/1.1 200 OK
+```
+
+If we're looking for a specific document the `_id` of that document needs to follow as a parameter, for example `/people/62eebccf0c5aa6efc2d8ceed`. This is the way **PATCH**, **PUT** and **DELETE** knows what document to handle as well.
+
+Other valid queries are `sort`, `where` and `select`.
+
+If we wanted our result to be sorted by their creation date we could send the `?sort=_created` query as an example. Or if we wanted to reverse the search, simply add `-` before the key value: `?sort=-_created`.
