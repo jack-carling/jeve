@@ -230,12 +230,10 @@ In our case the `_items` array only contains one (1) object, the one we just add
 
 If we imagined that we had 12 documents in the `/people` collection the `_meta` response would look something like this:
 
-```json
+```javascript
 {
   "_success": true,
-  "_items": [
-    // ...
-  ],
+  "_items": [ /* ... */ ],
   "_meta": {
     "total": 12,
     "limit": 10,
