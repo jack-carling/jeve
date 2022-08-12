@@ -257,4 +257,6 @@ If we're looking for a specific document the `_id` of that document needs to fol
 
 Other valid queries are `sort`, `where` and `select`.
 
-If we wanted our result to be sorted by their creation date we could send the `?sort=_created` query as an example. Or if we wanted to reverse the search, simply add `-` before the key value: `?sort=-_created`.
+If we wanted our result to be sorted by their creation date we could send the `/people?sort=_created` query as an example. Or if we wanted to reverse the search, simply add `-` before the key value: `/people?sort=-_created`.
+
+The last two parameters accepts json-input, `where` will filter the request. If for example we only wanted a list of people older than 18 we could use the following query: `/people?where={"age":{"$gte": 18}}`. `select` will filter the documents, as in including specific fields or excluding others. If we for example weren't interested in the ages, we could exclude that field by specifying a `0`: `/people?select={"age":0}`.

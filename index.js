@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 app.set('etag', false);
 
-const { validateParam, handlePost, handleGet } = require('./route');
+const { validateParam, handleGet, handlePost, handlePut, handlePatch, handleDelete } = require('./route');
 const { createModelForName } = require('./models');
 
 class Jeve {
@@ -126,7 +126,7 @@ class Jeve {
     app.param('id', (req, res, next, value) => {
       const validation = this.validateParam(req.method, value);
       if (!validation.success) {
-        return res.status(400).json({ _success: validation.success, _message: validation.message });
+        return res.status(400).json({ _success: validation.success, _error: validation.error });
       }
       next();
     });
@@ -135,8 +135,14 @@ class Jeve {
         this.handleGet(req, res, domain);
       } else if (req.method === 'POST') {
         this.handlePost(req, res, domain);
+      } else if (req.method === 'PUT') {
+        this.handlePut(req, res, domain);
+      } else if (req.method === 'PATCH') {
+        this.handlePatch(req, res, domain);
+      } else if (req.method === 'DELETE') {
+        this.handleDelete(req, res, domain);
       } else {
-        res.status(501).json({ _success: true });
+        res.status(501).json({ _success: false, _error: `Method \`${req.method} is not yet implemented.` });
       }
     });
   }
@@ -145,12 +151,15 @@ class Jeve {
 Jeve.prototype.validateParam = validateParam;
 Jeve.prototype.handleGet = handleGet;
 Jeve.prototype.handlePost = handlePost;
+Jeve.prototype.handlePut = handlePut;
+Jeve.prototype.handlePatch = handlePatch;
+Jeve.prototype.handleDelete = handleDelete;
 Jeve.prototype.createModelForName = createModelForName;
 
 const settings = {
   domain: {
     people: {
-      resourceMethods: ['GET', 'POST'],
+      resourceMethods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
       schema: {
         name: {
           type: 'string',
