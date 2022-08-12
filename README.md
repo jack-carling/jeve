@@ -1,6 +1,6 @@
 # Jeve
 
-The quick way to REST. Jeve is a JavaScript framework for effortlessly building an API. Powered by Express and Mongoose for native MongoDB support.
+The quick way to REST. Jeve is a JavaScript framework for effortlessly building an API. Powered by [Express](https://expressjs.com/) and [Mongoose](https://mongoosejs.com/) for native [MongoDB](https://www.mongodb.com/) support.
 
 ## Install
 
@@ -48,7 +48,9 @@ If we would want to run Jeve on port 5100 instead for example:
 ```javascript
 const settings = {
   domain: {
-    people: {},
+    people: {
+      schema: {},
+    },
   },
   port: 5100,
 };
