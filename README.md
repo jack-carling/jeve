@@ -234,7 +234,7 @@ If we imagined that we had 12 documents in the `/people` collection the `_meta` 
 {
   "_success": true,
   "_items": [
-    /* ... */
+    // ...
   ],
   "_meta": {
     "total": 12,
