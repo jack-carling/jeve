@@ -160,7 +160,7 @@ HTTP/1.1 400 Bad Request
 
 This time we get a 400 status code response instead along with a json error message since we sent an empty body request.
 
-```json
+```javascript
 {
   "_success": false,
   "_issues": ["Path `name` is required."]
@@ -176,7 +176,7 @@ HTTP/1.1 201 Created
 
 Now our first successful **POST** was made!
 
-```json
+```javascript
 {
   "_success": true,
   "_item": {
@@ -199,7 +199,7 @@ $ curl -i http://localhost:5000/people
 HTTP/1.1 200 OK
 ```
 
-```json
+```javascript
 {
   "_success": true,
   "_items": [
