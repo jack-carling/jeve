@@ -17,7 +17,9 @@ const Jeve = require('jeve');
 
 const settings = {
   domain: {
-    people: {},
+    people: {
+      schema: {},
+    },
   },
 };
 
@@ -229,7 +231,9 @@ If we imagined that we had 12 documents in the `/people` collection the `_meta` 
 ```json
 {
   "_success": true,
-  "_items": [ ... ],
+  "_items": [
+    /* ... */
+  ],
   "_meta": {
     "total": 12,
     "limit": 10,
