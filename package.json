@@ -2,7 +2,7 @@
   "name": "jeve",
   "version": "0.0.1",
   "description": "Quick way to REST",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"
