@@ -1,6 +1,6 @@
 {
   "name": "jeve",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Quick way to REST",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,14 @@
     "type": "git",
     "url": "git+https://github.com/jack-carling/jeve.git"
   },
-  "keywords": [],
+  "keywords": [
+    "node",
+    "api",
+    "rest",
+    "express",
+    "mongoose",
+    "mongodb"
+  ],
   "author": "Jack Carling",
   "license": "MIT",
   "bugs": {

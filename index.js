@@ -156,20 +156,4 @@ Jeve.prototype.handlePatch = handlePatch;
 Jeve.prototype.handleDelete = handleDelete;
 Jeve.prototype.createModelForName = createModelForName;
 
-const settings = {
-  domain: {
-    people: {
-      resourceMethods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
-      schema: {
-        name: {
-          type: 'string',
-          required: true,
-        },
-        age: 'number',
-      },
-    },
-  },
-};
-
-const jeve = new Jeve(settings);
-jeve.run();
+module.exports = Jeve;
