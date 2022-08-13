@@ -7,7 +7,7 @@ const settings = {
     people: {
       resourceMethods: ['GET', 'POST'],
       schema: {
-        name: 'string',
+        name: { type: 'string', required: true },
       },
     },
   },

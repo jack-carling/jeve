@@ -15,4 +15,15 @@ function expectStatus(method, domain, code) {
     });
 }
 
+function sendContent(content, domain, code) {
+  return chai
+    .request(URL)
+    .post(domain)
+    .send(content)
+    .then((res) => {
+      expect(res).to.have.status(code);
+    });
+}
+
 exports.expectStatus = expectStatus;
+exports.sendContent = sendContent;

@@ -3,7 +3,7 @@ const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 const expect = chai.expect;
 
-const { expectStatus } = require('./helpers');
+const { expectStatus, sendContent } = require('./helpers');
 
 console.log('PORT:', process.env.PORT ?? 5000);
 
@@ -52,7 +52,7 @@ describe('testing domain with basic schema (people)', () => {
     await expectStatus('get', '/people', 200);
   });
   it('returns 400 bad request on POST with no body', async () => {
-    await expectStatus('post', '/people', 400);
+    await sendContent({}, '/people', 400);
   });
   it('returns 404 not found on PUT', async () => {
     await expectStatus('put', '/people', 404);
