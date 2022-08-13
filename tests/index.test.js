@@ -5,6 +5,8 @@ const expect = chai.expect;
 
 const { expectStatus } = require('./helpers');
 
+console.log('PORT:', process.env.PORT ?? 5000);
+
 describe('[test] initializing...', () => {
   it('should be up and running...', () => {});
 });
