@@ -22,8 +22,54 @@ function sendContent(content, domain, code) {
     .send(content)
     .then((res) => {
       expect(res).to.have.status(code);
+      if (res.status === 201) {
+        return res.body;
+      }
+    })
+    .catch((err) => {
+      throw err;
+    });
+}
+
+function getContent(domain) {
+  return chai
+    .request(URL)
+    .get(domain)
+    .then((res) => {
+      return res.body;
+    })
+    .catch((err) => {
+      throw err;
+    });
+}
+
+function deleteContent(domain) {
+  return chai
+    .request(URL)
+    .delete(domain)
+    .then((res) => {
+      expect(res).to.have.status(204);
+    })
+    .catch((err) => {
+      throw err;
+    });
+}
+
+function updateContent(method, content, domain, code) {
+  return chai
+    .request(URL)
+    [method](domain)
+    .send(content)
+    .then((res) => {
+      expect(res).to.have.status(code);
+    })
+    .catch((err) => {
+      throw err;
     });
 }
 
 exports.expectStatus = expectStatus;
 exports.sendContent = sendContent;
+exports.getContent = getContent;
+exports.deleteContent = deleteContent;
+exports.updateContent = updateContent;

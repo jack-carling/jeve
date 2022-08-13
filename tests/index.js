@@ -5,9 +5,10 @@ const settings = {
     animals: {},
     drinks: { schema: {} },
     people: {
-      resourceMethods: ['GET', 'POST'],
+      resourceMethods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
       schema: {
         name: { type: 'string', required: true },
+        age: 'number',
       },
     },
   },
