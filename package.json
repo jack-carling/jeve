@@ -4,8 +4,7 @@
   "description": "Quick way to REST",
   "main": "lib/index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "test": "mocha tests"
   },
   "repository": {
     "type": "git",
@@ -32,6 +31,9 @@
     "mongoose": "6.5.0"
   },
   "devDependencies": {
-    "nodemon": "2.0.19"
+    "nodemon": "2.0.19",
+    "chai": "*",
+    "chai-http": "*",
+    "mocha": "*"
   }
 }

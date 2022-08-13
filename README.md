@@ -17,9 +17,7 @@ const Jeve = require('jeve');
 
 const settings = {
   domain: {
-    people: {
-      schema: {},
-    },
+    people: {},
   },
 };
 
@@ -31,8 +29,10 @@ That's all it takes for the API to go live with an endpoint. We can now try to *
 
 ```
 $ curl -i http://localhost:5000/people
-HTTP/1.1 200 OK
+HTTP/1.1 204 No Content
 ```
+
+We're live but the endpoint returns no content since we haven't configured a schema yet. More about that later.
 
 ## Settings
 
@@ -48,9 +48,7 @@ If we would want to run Jeve on port 5100 instead for example:
 ```javascript
 const settings = {
   domain: {
-    people: {
-      schema: {},
-    },
+    people: {},
   },
   port: 5100,
 };
