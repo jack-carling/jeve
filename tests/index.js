@@ -11,8 +11,27 @@ const settings = {
         age: 'number',
       },
     },
+    adults: {
+      preHandler: isAdult,
+      resourceMethods: ['DELETE', 'POST'],
+      schema: {
+        age: {
+          type: 'number',
+          required: true,
+        },
+        isAdult: 'boolean',
+      },
+    },
   },
 };
+
+function isAdult(req, res, next) {
+  if (req.method === 'POST') {
+    const age = req.body?.age;
+    if (age) req.body.isAdult = age >= 18;
+  }
+  next();
+}
 
 const jeve = new Jeve(settings);
 jeve.run();

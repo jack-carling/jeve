@@ -270,3 +270,30 @@ Other valid queries are `sort`, `where` and `select`.
 If we wanted our result to be sorted by their creation date we could send the `/people?sort=_created` query as an example. Or if we wanted to reverse the search, simply add `-` before the key value: `/people?sort=-_created`.
 
 The last two parameters accepts json-input, `where` will filter the request. If for example we only wanted a list of people older than 18 we could use the following query: `/people?where={"age":{"$gte": 18}}`. `select` will filter the documents, as in including specific fields or excluding others. If we for example weren't interested in the ages, we could exclude that field by specifying a `0`: `/people?select={"age":0}`.
+
+## Middleware
+
+Each domain accepts a `preHandler` function which will run before the request. Use cases range from authorization to catching data and manipulating. As an example, let's imagine we had a `boolean` value for the field `isAdult` in our schema. We're not sending this value in our request, but we want our middleware to catch it.
+
+```javascript
+{ /* ... */
+  people: {
+    resourceMethods: ['GET', 'POST'],
+    schema: {
+      age: 'number',
+      isAdult: 'boolean',
+    },
+    preHandler: checkIfAdult,
+  }
+}
+```
+
+In our middleware function `checkIfAdult`, we would read the body if the method is a **POST** and add the value to it. Don't forget to call `next()`...
+
+```javascript
+function checkIfAdult(req, res, next) {
+  const age = req.body?.age;
+  if (age) req.body.isAdult = age >= 18;
+  next();
+}
+```
