@@ -91,3 +91,20 @@ describe('testing domain people', () => {
     await deleteContent(`/people/${id}`);
   });
 });
+
+describe('testing domain adults and preHandlers', () => {
+  let body;
+  it('does not allow GET', async () => {
+    await expectStatus('get', '/adults', 404);
+  });
+  it('returns 201 when created', async () => {
+    body = await sendContent({ age: 20 }, '/adults', 201);
+  });
+  it('checks if adult boolean has been added', async () => {
+    expect(body['_item']['isAdult']).to.be.true;
+  });
+  it('deletes the document again', async () => {
+    const id = body['_item']['_id'];
+    await deleteContent(`/adults/${id}`);
+  });
+});
