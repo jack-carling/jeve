@@ -18,6 +18,9 @@
     "mongoose",
     "mongodb"
   ],
+  "files": [
+    "/lib"
+  ],
   "author": "Jack Carling",
   "license": "MIT",
   "bugs": {
