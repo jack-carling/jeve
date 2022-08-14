@@ -1,6 +1,14 @@
-# Jeve
+<p align="center"><img src="https://user-images.githubusercontent.com/72305598/184533504-d38cfa2d-97b0-4dd1-95a2-d4a2a2dfb576.png" alt="Jeve" /></p>
 
-The quick way to REST. Jeve is a JavaScript framework for effortlessly building an API. Powered by [Express](https://expressjs.com/) and [Mongoose](https://mongoosejs.com/) for native [MongoDB](https://www.mongodb.com/) support.
+<p align="center">
+<img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fjack-carling%2Fjeve%2Fbadge%3Fref%3Dmain&style=flat" />
+<img src="https://img.shields.io/npm/dt/jeve" />
+<img src="https://img.shields.io/npm/v/jeve" />
+<img src="https://img.shields.io/npm/l/jeve" />
+</p>
+<br />
+
+Jeve is a JavaScript framework for effortlessly building an API. Powered by [Express](https://expressjs.com/) and [Mongoose](https://mongoosejs.com/) for native [MongoDB](https://www.mongodb.com/) support. Inspired by [PyEve](https://python-eve.org/) for Python.
 
 ## Install
 
