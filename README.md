@@ -40,7 +40,7 @@ $ curl -i http://localhost:5000/people
 HTTP/1.1 204 No Content
 ```
 
-We're live but the endpoint returns no content since we haven't configured a schema yet. More about that later.
+We're live but the endpoint returns no content since we haven't set up a schema. More about that later.
 
 ## Settings
 
@@ -79,7 +79,7 @@ const settings = {
 };
 ```
 
-Types can be added direct as a string:
+Types can be written directly as a string:
 
 ```javascript
 name: 'string';
@@ -198,7 +198,7 @@ By default only **GET** methods are allowed unless an array of `resourceMethods`
 
 ## Params & Queries
 
-If we make a new request to `/people` we now get the everything that's stored in the database.
+If we make a new **GET** request to `/people`, we now get everything that's stored in the database.
 
 ```
 $ curl -i http://localhost:5000/people
@@ -269,11 +269,11 @@ Other valid queries are `sort`, `where` and `select`.
 
 If we wanted our result to be sorted by their creation date we could send the `/people?sort=_created` query as an example. Or if we wanted to reverse the search, simply add `-` before the key value: `/people?sort=-_created`.
 
-The last two parameters accepts json-input, `where` will filter the request. If for example we only wanted a list of people older than 18 we could use the following query: `/people?where={"age":{"$gte": 18}}`. `select` will filter the documents, as in including specific fields or excluding others. If we for example weren't interested in the ages, we could exclude that field by specifying a `0`: `/people?select={"age":0}`.
+The last two parameters accepts json-input, `where` will filter the request. If for example we only wanted a list of people older than 18 we could use the following query: `/people?where={"age":{"$gte": 18}}`. `select` will filter the documents, as in including specific fields or excluding others. If we for example weren't interested in the ages, we could exclude that field by specifying the key along with a `0`: `/people?select={"age":0}`.
 
 ## Middleware
 
-Each domain accepts a `preHandler` function which will run before the request. Use cases range from authorization to catching data and manipulating. As an example, let's imagine we had a `boolean` value for the field `isAdult` in our schema. We're not sending this value in our request, but we want our middleware to catch it.
+Each domain accepts a `preHandler` function which will run before the request. Use cases range from authorization to catching data and manipulating the body. As an example, let's imagine we had a `boolean` value for the field `isAdult` in our schema. We're not sending this value in our request, but we want our middleware to catch it.
 
 ```javascript
 { /* ... */
@@ -288,7 +288,7 @@ Each domain accepts a `preHandler` function which will run before the request. U
 }
 ```
 
-In our middleware function `checkIfAdult`, we would read the body if the method is a **POST** and add the value to it. Don't forget to call `next()`...
+In our middleware function `checkIfAdult`, we would simply add the value to it. Don't forget to call with `next()`...
 
 ```javascript
 function checkIfAdult(req, res, next) {
@@ -296,4 +296,36 @@ function checkIfAdult(req, res, next) {
   if (age) req.body.isAdult = age >= 18;
   next();
 }
+```
+
+## Custom routes
+
+Jeve supports custom routes:
+
+| method | function        |
+| ------ | --------------- |
+| GET    | `jeve.get()`    |
+| POST   | `jeve.post()`   |
+| PUT    | `jeve.put()`    |
+| PATCH  | `jeve.patch()`  |
+| DELETE | `jeve.delete()` |
+
+```javascript
+jeve.get('/greeting', (req, res) => {
+  res.send('Hello World!');
+});
+```
+
+If `greeting` exists in our `domain` object, the custom route will be skipped and not initialized due to conflict and a message will be shown in the console. However, if the path is deeper, for example `/greeting/swedish`, the custom route will be created.
+
+## Accessing Models
+
+Every model that's dynamically created by Jeve is accessible from the `jeve.model()` function. If we for example wanted to access a model from a custom route and use any native Mongoose function with it:
+
+```javascript
+jeve.get('/greeting/:id', async (req, res) => {
+  const { id } = req.params;
+  const person = await jeve.model('people').findOne({ _id: id });
+  res.send(`Hello ${person.name}`);
+});
 ```
