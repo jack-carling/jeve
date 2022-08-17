@@ -13,7 +13,7 @@ const settings = {
     },
     adults: {
       preHandler: isAdult,
-      resourceMethods: ['DELETE', 'POST'],
+      resourceMethods: ['DELETE', 'POST', 'GET'],
       schema: {
         age: {
           type: 'number',
