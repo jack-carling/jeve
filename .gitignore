@@ -106,5 +106,5 @@ dist
 # macOS
 .DS_Store
 
-# jeve
-jeve/
+# Dev
+docs/
