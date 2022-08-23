@@ -310,6 +310,8 @@ Jeve supports custom routes:
 | PATCH  | `jeve.patch()`  |
 | DELETE | `jeve.delete()` |
 
+A simple example of a `/greeting` route that returns the text `Hello World!`:
+
 ```javascript
 jeve.get('/greeting', (req, res) => {
   res.send('Hello World!');
@@ -329,3 +331,7 @@ jeve.get('/greeting/:id', async (req, res) => {
   res.send(`Hello ${person.name}`);
 });
 ```
+
+## Self written documentation
+
+Jeve will dynamically create it's own documentation and the UI is accessible at `http://localhost:5000/docs`. The documentation contains all available routes in the `settings` object and will show which resource methods they're accessible by. A basic view of the schema is available which will be improved in future versions of Jeve.
