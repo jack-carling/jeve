@@ -8,7 +8,20 @@
 </p>
 <br />
 
-Jeve is a JavaScript framework for effortlessly building an API. Powered by [Express](https://expressjs.com/) and [Mongoose](https://mongoosejs.com/) for native [MongoDB](https://www.mongodb.com/) support. Inspired by [PyEve](https://python-eve.org/) for Python.
+Jeve is a JavaScript framework for effortlessly building an API with a [self-written documentation](#self-written-documentation). Powered by [Express](https://expressjs.com/) and [Mongoose](https://mongoosejs.com/) for native [MongoDB](https://www.mongodb.com/) support. Inspired by [PyEve](https://python-eve.org/) for Python.
+
+## Table of contents
+
+- [Install](#install)
+- [Quick start](#quick-start)
+- [Settings](#settings)
+- [Schema](#schema)
+- [Resource methods](#resource-methods)
+- [Params & queries](#params--queries)
+- [Middleware](#middleware)
+- [Custom routes](#custom-routes)
+- [Accessing models](#accessing-models)
+- [Self-written documentation](#self-written-documentation)
 
 ## Install
 
@@ -196,7 +209,7 @@ Now our first successful **POST** was made!
 
 By default only **GET** methods are allowed unless an array of `resourceMethods` have been defined. If however, you'd like an endpoint only serving **POST** requests, simply add that as the single value to the array.
 
-## Params & Queries
+## Params & queries
 
 If we make a new **GET** request to `/people`, we now get everything that's stored in the database.
 
@@ -332,6 +345,6 @@ jeve.get('/greeting/:id', async (req, res) => {
 });
 ```
 
-## Self written documentation
+## Self-written documentation
 
-Jeve will dynamically create it's own documentation and the UI is accessible at `http://localhost:5000/docs`. The documentation contains all available routes in the `settings` object and will show which resource methods they're accessible by. A basic view of the schema is available which will be improved in future versions of Jeve.
+Jeve will dynamically create it's own documentation and the UI is accessible at `/docs` in the browser. The documentation contains all available routes in the `settings` object and will show which resource methods they're accessible by. A basic view of the schema is available which will be improved upon in future versions of Jeve.
