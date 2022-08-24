@@ -22,6 +22,12 @@ const settings = {
         isAdult: 'boolean',
       },
     },
+    food: {
+      resourceMethods: ['GET', 'POST'],
+      schema: {
+        favorites: [{ type: 'string' }],
+      },
+    },
   },
 };
 
@@ -35,3 +41,5 @@ function isAdult(req, res, next) {
 
 const jeve = new Jeve(settings);
 jeve.run();
+
+exports.jeve = jeve;

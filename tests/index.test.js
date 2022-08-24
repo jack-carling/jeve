@@ -4,6 +4,7 @@ chai.use(chaiHttp);
 const expect = chai.expect;
 
 const { expectStatus, sendContent, getContent, deleteContent, updateContent } = require('./helpers');
+const { jeve } = require('./index');
 
 describe('[test] initializing...', () => {
   it('should be up and running...', () => {});
@@ -25,6 +26,10 @@ describe('testing domain with empty object (animals)', () => {
   it('returns 404 not found on DELETE', async () => {
     await expectStatus('delete', '/animals', 404);
   });
+  it('does not initialize a model', async () => {
+    const model = await jeve.model('animals');
+    expect(model).to.be.undefined;
+  });
 });
 
 describe('testing domain with empty schema object (drinks)', () => {
@@ -42,6 +47,10 @@ describe('testing domain with empty schema object (drinks)', () => {
   });
   it('returns 404 not found on DELETE', async () => {
     await expectStatus('delete', '/drinks', 404);
+  });
+  it('does not initialize a model', async () => {
+    const model = await jeve.model('drinks');
+    expect(model).to.be.undefined;
   });
 });
 
@@ -106,5 +115,11 @@ describe('testing domain adults and preHandlers', () => {
   it('deletes the document again', async () => {
     const id = body['_item']['_id'];
     await deleteContent(`/adults/${id}`);
+  });
+});
+
+describe('testing domain food', () => {
+  it('returns 201 when created', async () => {
+    body = await sendContent({ favorites: ['pizza'] }, '/food', 201);
   });
 });
