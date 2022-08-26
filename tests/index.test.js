@@ -10,46 +10,46 @@ describe('[test] initializing...', () => {
   it('should be up and running...', () => {});
 });
 
-describe('testing domain with empty object (animals)', () => {
+describe('testing domain with empty object (products)', () => {
   it('returns 204 no content on GET', async () => {
-    await expectStatus('get', '/animals', 204);
+    await expectStatus('get', '/products', 204);
   });
   it('returns 404 not found on POST', async () => {
-    await expectStatus('post', '/animals', 404);
+    await expectStatus('post', '/products', 404);
   });
   it('returns 404 not found on PUT', async () => {
-    await expectStatus('put', '/animals', 404);
+    await expectStatus('put', '/products', 404);
   });
   it('returns 404 not found on PATCH', async () => {
-    await expectStatus('patch', '/animals', 404);
+    await expectStatus('patch', '/products', 404);
   });
   it('returns 404 not found on DELETE', async () => {
-    await expectStatus('delete', '/animals', 404);
+    await expectStatus('delete', '/products', 404);
   });
   it('does not initialize a model', async () => {
-    const model = await jeve.model('animals');
+    const model = await jeve.model('products');
     expect(model).to.be.undefined;
   });
 });
 
-describe('testing domain with empty schema object (drinks)', () => {
+describe('testing domain with empty schema object (users)', () => {
   it('returns 204 no content on GET', async () => {
-    await expectStatus('get', '/drinks', 204);
+    await expectStatus('get', '/users', 204);
   });
   it('returns 404 not found on POST', async () => {
-    await expectStatus('post', '/drinks', 404);
+    await expectStatus('post', '/users', 404);
   });
   it('returns 404 not found on PUT', async () => {
-    await expectStatus('put', '/drinks', 404);
+    await expectStatus('put', '/users', 404);
   });
   it('returns 404 not found on PATCH', async () => {
-    await expectStatus('patch', '/drinks', 404);
+    await expectStatus('patch', '/users', 404);
   });
   it('returns 404 not found on DELETE', async () => {
-    await expectStatus('delete', '/drinks', 404);
+    await expectStatus('delete', '/users', 404);
   });
   it('does not initialize a model', async () => {
-    const model = await jeve.model('drinks');
+    const model = await jeve.model('users');
     expect(model).to.be.undefined;
   });
 });
@@ -99,27 +99,44 @@ describe('testing domain people', () => {
     const id = body['_items'][0]['_id'];
     await deleteContent(`/people/${id}`);
   });
+  it('has a model', async () => {
+    const model = await jeve.model('people');
+    expect(model).to.not.be.undefined;
+  });
 });
 
-describe('testing domain adults and preHandlers', () => {
+describe('testing domain people and preHandler', () => {
   let body;
-  it('does not allow GET', async () => {
-    await expectStatus('get', '/adults', 404);
-  });
   it('returns 201 when created', async () => {
-    body = await sendContent({ age: 20 }, '/adults', 201);
+    body = await sendContent({ name: 'Sara', age: 20 }, '/people', 201);
   });
   it('checks if adult boolean has been added', async () => {
     expect(body['_item']['isAdult']).to.be.true;
   });
   it('deletes the document again', async () => {
     const id = body['_item']['_id'];
-    await deleteContent(`/adults/${id}`);
+    await deleteContent(`/people/${id}`);
   });
 });
 
-describe('testing domain food', () => {
-  it('returns 201 when created', async () => {
-    body = await sendContent({ favorites: ['pizza'] }, '/food', 201);
+describe('testing domain posts', () => {
+  it('returns 204 no content on GET', async () => {
+    await expectStatus('get', '/posts', 204);
+  });
+  it('returns 404 not found on POST', async () => {
+    await expectStatus('post', '/posts', 404);
+  });
+  it('returns 404 not found on PUT', async () => {
+    await expectStatus('put', '/posts', 404);
+  });
+  it('returns 404 not found on PATCH', async () => {
+    await expectStatus('patch', '/posts', 404);
+  });
+  it('returns 404 not found on DELETE', async () => {
+    await expectStatus('delete', '/posts', 404);
+  });
+  it('does not initialize a model', async () => {
+    const model = await jeve.model('posts');
+    expect(model).to.be.undefined;
   });
 });

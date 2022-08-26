@@ -2,30 +2,23 @@ const Jeve = require('../lib');
 
 const settings = {
   domain: {
-    animals: {},
-    drinks: { schema: {} },
+    products: {},
+    users: { schema: {} },
     people: {
+      preHandler: isAdult,
       resourceMethods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
       schema: {
         name: { type: 'string', required: true },
         age: 'number',
-      },
-    },
-    adults: {
-      preHandler: isAdult,
-      resourceMethods: ['DELETE', 'POST'],
-      schema: {
-        age: {
-          type: 'number',
-          required: true,
-        },
         isAdult: 'boolean',
       },
     },
-    food: {
-      resourceMethods: ['GET', 'POST'],
+    posts: {
       schema: {
-        favorites: [{ type: 'string' }],
+        post: {
+          type: 'string',
+          header: {},
+        },
       },
     },
   },
