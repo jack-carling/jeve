@@ -3,7 +3,14 @@ const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 const expect = chai.expect;
 
-const { expectStatus, sendContent, getContent, deleteContent, updateContent } = require('./helpers');
+const {
+  expectStatus,
+  sendContent,
+  sendContentWithoutExpect,
+  getContent,
+  deleteContent,
+  updateContent,
+} = require('./helpers');
 const { jeve } = require('./index');
 
 describe('[test] initializing...', () => {
@@ -138,5 +145,72 @@ describe('testing domain posts', () => {
   it('does not initialize a model', async () => {
     const model = await jeve.model('posts');
     expect(model).to.be.undefined;
+  });
+});
+
+describe('testing domain comments', () => {
+  let body;
+  it('initializes a model', async () => {
+    const model = await jeve.model('comments');
+    expect(model).to.not.be.undefined;
+  });
+  it('returns 400 bad request on POST', async () => {
+    const content = {};
+    body = await sendContent(content, '/comments', 400);
+  });
+  it('returns three issues (required)', async () => {
+    expect(body['_issues']).to.have.lengthOf(3);
+  });
+  it('still has 2 required fields', async () => {
+    const content = { content: { header: 'Title 1' } };
+    body = await sendContentWithoutExpect(content, '/comments');
+    expect(body['_issues']).to.be.lengthOf(2);
+  });
+  it('returns casting error for content.length', async () => {
+    const content = { content: { header: 'Title 1', body: 'Lorem Ipsum', length: '11' } };
+    body = await sendContentWithoutExpect(content, '/comments');
+    expect(body['_issues'][0]['content.length']).to.equal('must be of number type');
+  });
+  it('returns casting error for content.body', async () => {
+    const content = { content: { header: 'Title 1', body: 12345, length: 11 } };
+    body = await sendContentWithoutExpect(content, '/comments');
+    expect(body['_issues'][0]['content.body']).to.equal('must be of string type');
+  });
+  it('returns casting error for user', async () => {
+    const content = { user: 'Jeve', content: { header: 'Title 1', body: 'Lorem Ipsum', length: 11 } };
+    body = await sendContentWithoutExpect(content, '/comments');
+    expect(body['_issues'][0]['user']).to.equal('must be a valid objectid');
+  });
+  it('returns casting error for posted', async () => {
+    const content = { posted: 'X', content: { header: 'Title 1', body: 'Lorem Ipsum', length: 11 } };
+    body = await sendContentWithoutExpect(content, '/comments');
+    expect(body['_issues'][0]['posted']).to.equal('must be a valid date');
+  });
+  it('returns casting error for firstComment', async () => {
+    const content = { firstComment: 'yes', content: { header: 'Title 1', body: 'Lorem Ipsum', length: 11 } };
+    body = await sendContentWithoutExpect(content, '/comments');
+    expect(body['_issues'][0]['firstComment']).to.equal('must be a boolean (true/false)');
+  });
+  it('returns 201 when created', async () => {
+    const content = {
+      user: '507f1f77bcf86cd799439011',
+      posted: '2022/08/27',
+      firstComment: true,
+      content: { header: 'Title 1', body: 'Lorem Ipsum', length: 11 },
+    };
+    await sendContent(content, '/comments', 201);
+  });
+  it('fails because content.header is unique', async () => {
+    const content = {
+      user: '507f1f77bcf86cd799439011',
+      posted: '2022/08/27',
+      firstComment: true,
+      content: { header: 'Title 1', body: 'Lorem Ipsum', length: 11 },
+    };
+    body = await sendContentWithoutExpect(content, '/comments');
+    expect(body['_issues'][0]['content.header']).to.equal('value (Title 1) is not unique');
+  });
+  it('clears the collection', async () => {
+    await jeve.model('comments').deleteMany({});
   });
 });

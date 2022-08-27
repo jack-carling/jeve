@@ -21,6 +21,19 @@ const settings = {
         },
       },
     },
+    comments: {
+      resourceMethods: ['GET', 'POST'],
+      schema: {
+        user: 'objectid',
+        content: {
+          header: { type: 'string', required: true, unique: true },
+          body: { type: 'string', required: true },
+          length: { type: 'number', required: true },
+        },
+        posted: 'date',
+        firstComment: 'boolean',
+      },
+    },
   },
 };
 
