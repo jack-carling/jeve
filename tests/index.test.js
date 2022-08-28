@@ -210,6 +210,33 @@ describe('testing domain comments', () => {
     body = await sendContentWithoutExpect(content, '/comments');
     expect(body['_issues'][0]['content.header']).to.equal('value (Title 1) is not unique');
   });
+  it('returns min error for content.length', async () => {
+    const content = { content: { header: 'Title 1', body: 'Lorem', length: 5 } };
+    body = await sendContentWithoutExpect(content, '/comments');
+    expect(body['_issues'][0]['content.length']).to.equal('value (5) is less than minimum allowed value (6)');
+  });
+  it('returns max error for content.length', async () => {
+    const content = { content: { header: 'Title 1', body: 'Lorem ipsum dolor sit', length: 21 } };
+    body = await sendContentWithoutExpect(content, '/comments');
+    expect(body['_issues'][0]['content.length']).to.equal('value (21) is more than maximum allowed value (12)');
+  });
+  //
+  it('returns minLength error for content.header', async () => {
+    const content = { content: { header: 'X', body: 'Lorem ipsum', length: 11 } };
+    body = await sendContentWithoutExpect(content, '/comments');
+    expect(body['_issues'][0]['content.header']).to.equal(
+      `length of value ('X') is less than minimum allowed value (2)`
+    );
+  });
+  it('returns maxLength error for content.header', async () => {
+    const content = { content: { header: 'X'.repeat(21), body: 'Lorem ipsum', length: 11 } };
+    body = await sendContentWithoutExpect(content, '/comments');
+    expect(body['_issues'][0]['content.header']).to.equal(
+      `length of value ('${'X'.repeat(21)}') is more than maximum allowed value (20)`
+    );
+  });
+
+  //
   it('clears the collection', async () => {
     await jeve.model('comments').deleteMany({});
   });

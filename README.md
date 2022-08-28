@@ -182,7 +182,11 @@ This time we get a 400 status code response instead along with a json error mess
 ```javascript
 {
   "_success": false,
-  "_issues": ["Path `name` is required."]
+  "_issues": [
+    {
+      "name": "required field"
+    }
+  ]
 }
 ```
 
