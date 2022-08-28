@@ -26,9 +26,9 @@ const settings = {
       schema: {
         user: 'objectid',
         content: {
-          header: { type: 'string', required: true, unique: true },
+          header: { type: 'string', required: true, unique: true, minLength: 2, maxLength: 20 },
           body: { type: 'string', required: true },
-          length: { type: 'number', required: true },
+          length: { type: 'number', required: true, min: 6, max: 12 },
         },
         posted: 'date',
         firstComment: 'boolean',

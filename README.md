@@ -17,6 +17,7 @@ Jeve is a JavaScript framework for effortlessly building an API with a [self-wri
 - [Settings](#settings)
 - [Schema](#schema)
 - [Resource methods](#resource-methods)
+- [Validations](#validations)
 - [Params & queries](#params--queries)
 - [Middleware](#middleware)
 - [Custom routes](#custom-routes)
@@ -182,7 +183,11 @@ This time we get a 400 status code response instead along with a json error mess
 ```javascript
 {
   "_success": false,
-  "_issues": ["Path `name` is required."]
+  "_issues": [
+    {
+      "name": "required field"
+    }
+  ]
 }
 ```
 
@@ -208,6 +213,38 @@ Now our first successful **POST** was made!
 ```
 
 By default only **GET** methods are allowed unless an array of `resourceMethods` have been defined. If however, you'd like an endpoint only serving **POST** requests, simply add that as the single value to the array.
+
+## Validations
+
+Other than `type` and `required` the following validators can be added to our schema:
+
+| key       | format  | values                                                       | comment                 |
+| --------- | ------- | ------------------------------------------------------------ | ----------------------- |
+| type      | string  | `string`, `number`, `date`, `boolean`, `objectid` or `array` | Mongoose type           |
+| required  | boolean | `true` or `false`                                            | Required field          |
+| unique    | boolean | `true` or `false`                                            | Unique field            |
+| min       | int     | any integer lower than max                                   | Used with numbers       |
+| max       | int     | any integer higher than min                                  | Used with numbers       |
+| minLength | int     | any integer lower than minLength                             | Used with strings       |
+| maxLength | int     | any integer higher than maxLength                            | Used with strings       |
+| default   | any     |                                                              | Default value for field |
+
+An example where name has to contain at least 2 characters and only one email can exist in the database:
+
+```javascript
+{ /* ... */
+  name: {
+    type: 'string',
+    required: true,
+    minLength: 2, // minLength/maxLength for string type and min/max for number type
+  },
+  email: {
+    type: 'string',
+    required: true,
+    unique: true,
+  }
+}
+```
 
 ## Params & queries
 
