@@ -10,6 +10,8 @@ const {
   getContent,
   deleteContent,
   updateContent,
+  expectModelPathType,
+  expectModelPathValidation,
 } = require('./helpers');
 const { jeve } = require('./index');
 
@@ -110,6 +112,18 @@ describe('testing domain people', () => {
     const model = await jeve.model('people');
     expect(model).to.not.be.undefined;
   });
+  it('has name as type string', async () => {
+    await expectModelPathType('people', 'name', 'string');
+  });
+  it('has name as a required field', async () => {
+    await expectModelPathValidation('people', 'name', 'required', true);
+  });
+  it('has age as type number', async () => {
+    await expectModelPathType('people', 'age', 'number');
+  });
+  it('has isAdult as type boolean', async () => {
+    await expectModelPathType('people', 'isAdult', 'boolean');
+  });
 });
 
 describe('testing domain people and preHandler', () => {
@@ -153,6 +167,54 @@ describe('testing domain comments', () => {
   it('initializes a model', async () => {
     const model = await jeve.model('comments');
     expect(model).to.not.be.undefined;
+  });
+  it('has user as type objectid', async () => {
+    await expectModelPathType('comments', 'user', 'objectid');
+  });
+  it('has content.header as type string', async () => {
+    await expectModelPathType('comments', 'content.header', 'string');
+  });
+  it('has content.header as a required field', async () => {
+    await expectModelPathValidation('comments', 'content.header', 'required', true);
+  });
+  it('has content.header as a unique field', async () => {
+    await expectModelPathValidation('comments', 'content.header', 'unique', true);
+  });
+  it('has content.header with minLength 2', async () => {
+    await expectModelPathValidation('comments', 'content.header', 'minLength', 2);
+  });
+  it('has content.header with maxLength 20', async () => {
+    await expectModelPathValidation('comments', 'content.header', 'maxLength', 20);
+  });
+  it('has content.body as type string', async () => {
+    await expectModelPathType('comments', 'content.body', 'string');
+  });
+  it('has content.body as a required field', async () => {
+    await expectModelPathValidation('comments', 'content.body', 'required', true);
+  });
+  it('has content.length as type number', async () => {
+    await expectModelPathType('comments', 'content.length', 'number');
+  });
+  it('has content.length as a required field', async () => {
+    await expectModelPathValidation('comments', 'content.length', 'required', true);
+  });
+  it('has content.length with min 6', async () => {
+    await expectModelPathValidation('comments', 'content.length', 'min', 6);
+  });
+  it('has content.length with max 12', async () => {
+    await expectModelPathValidation('comments', 'content.length', 'max', 12);
+  });
+  it('has other as type object/mixed', async () => {
+    await expectModelPathType('comments', 'other', 'mixed');
+  });
+  it('has a default value for other', async () => {
+    await expectModelPathValidation('comments', 'other', 'default', {});
+  });
+  it('has posted as type date', async () => {
+    await expectModelPathType('comments', 'posted', 'date');
+  });
+  it('has firstComment as type date', async () => {
+    await expectModelPathType('comments', 'firstComment', 'boolean');
   });
   it('returns 400 bad request on POST', async () => {
     const content = {};
@@ -235,8 +297,26 @@ describe('testing domain comments', () => {
       `length of value ('${'X'.repeat(21)}') is more than maximum allowed value (20)`
     );
   });
-
-  //
+  it('returns 201 when created', async () => {
+    const content = {
+      user: '507f1f77bcf86cd799439011',
+      posted: '2022/08/27',
+      firstComment: true,
+      content: { header: 'Title 2', body: 'Lorem Ipsum', length: 11 },
+      other: { newUser: true },
+    };
+    await sendContent(content, '/comments', 201);
+  });
+  it('returns 400 bad request on POST with other as array', async () => {
+    const content = {
+      user: '507f1f77bcf86cd799439011',
+      posted: '2022/08/27',
+      firstComment: true,
+      content: { header: 'Title 2', body: 'Lorem Ipsum', length: 11 },
+      other: [{ newUser: true }],
+    };
+    await sendContent(content, '/comments', 400);
+  });
   it('clears the collection', async () => {
     await jeve.model('comments').deleteMany({});
   });

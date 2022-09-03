@@ -30,6 +30,10 @@ const settings = {
           body: { type: 'string', required: true },
           length: { type: 'number', required: true, min: 6, max: 12 },
         },
+        other: {
+          type: 'object',
+          default: {},
+        },
         posted: 'date',
         firstComment: 'boolean',
       },

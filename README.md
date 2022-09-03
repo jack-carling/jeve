@@ -58,7 +58,7 @@ We're live but the endpoint returns no content since we haven't set up a schema.
 
 ## Settings
 
-In order to change the default port and MongoDB URI simply add the keys to the root of the `settings` object. They can also be added in a `.env` file. In case values exist both in `.env` and the root, the values in the root object will be superseded by dotenv.
+In order to change the default port and MongoDB URI simply add the keys to the root of the `settings` object. They can also be added in a `.env` file. In case values exists both in `.env` and in the root of the `settings` object, the root value will be superseded by dotenv.
 
 | key      | value  | default               | dotenv   |
 | -------- | ------ | --------------------- | -------- |
@@ -78,7 +78,7 @@ const settings = {
 
 ## Schema
 
-Jeve will automatically create Mongoose Models based on a `schema` object under each domain. Let's add name and age to the people domain as types string/number.
+Jeve will automatically create Mongoose Models based on a `schema` object under each domain. Let's add name and age to the people domain as types string and number.
 
 ```javascript
 const settings = {
@@ -123,6 +123,7 @@ The following types are supported:
 - date
 - boolean
 - objectid
+- object
 - array
 
 We now have a `settings` object which looks like this:
@@ -216,27 +217,57 @@ By default only **GET** methods are allowed unless an array of `resourceMethods`
 
 ## Validations
 
-Other than `type` and `required` the following validators can be added to our schema:
+Schema keys are actual field names and in case the value is an object instead of the `type` as a string the following validation rules are can be used:
 
-| key       | format  | values                                                       | comment                 |
-| --------- | ------- | ------------------------------------------------------------ | ----------------------- |
-| type      | string  | `string`, `number`, `date`, `boolean`, `objectid` or `array` | Mongoose type           |
-| required  | boolean | `true` or `false`                                            | Required field          |
-| unique    | boolean | `true` or `false`                                            | Unique field            |
-| min       | int     | any integer lower than max                                   | Used with numbers       |
-| max       | int     | any integer higher than min                                  | Used with numbers       |
-| minLength | int     | any integer lower than minLength                             | Used with strings       |
-| maxLength | int     | any integer higher than maxLength                            | Used with strings       |
-| default   | any     |                                                              | Default value for field |
+<table>
+  <tr>
+    <td>`type`</td>
+    <td>
+      Field data type. Required in the schema and can be one of the following:
+      <ul>
+        <li>`string`</li>
+        <li>`number`</li>
+        <li>`date`</li>
+        <li>`boolean`</li>
+        <li>`objectid`</li>
+        <li>`object`</li>
+        <li>`array`</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>`required`</td>
+    <td>If `true` the field is mandatory on insertion.</td>
+  </tr>
+  <tr>
+    <td>`unique`</td>
+    <td>If `true` the value of the field must be unique within the collection.</td>
+  </tr>
+  <tr>
+    <td>`default`</td>
+    <td>
+      The default value for the field. When serving POST and PUT requests, missing fields will be assigned the
+      configured default values.
+    </td>
+  </tr>
+  <tr>
+    <td>`minLength`, `maxLength`</td>
+    <td>Minimum and maximum length allowed for `string` types.</td>
+  </tr>
+  <tr>
+    <td>`min`, `max`</td>
+    <td>Minimum and maximum values allowed for `number` types.</td>
+  </tr>
+</table>
 
-An example where name has to contain at least 2 characters and only one email can exist in the database:
+An example where name has to contain at least 2 characters and email must be unique within the collection:
 
 ```javascript
 { /* ... */
   name: {
     type: 'string',
     required: true,
-    minLength: 2, // minLength/maxLength for string type and min/max for number type
+    minLength: 2
   },
   email: {
     type: 'string',
