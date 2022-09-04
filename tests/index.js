@@ -6,7 +6,8 @@ const settings = {
     users: { schema: {} },
     people: {
       preHandler: isAdult,
-      resourceMethods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+      resourceMethods: ['GET', 'POST'],
+      itemMethods: ['GET', 'PATCH', 'PUT', 'DELETE'],
       schema: {
         name: { type: 'string', required: true },
         age: 'number',
@@ -23,6 +24,7 @@ const settings = {
     },
     comments: {
       resourceMethods: ['GET', 'POST'],
+      itemMethods: ['GET'],
       schema: {
         user: 'objectid',
         content: {

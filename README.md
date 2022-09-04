@@ -17,6 +17,7 @@ Jeve is a JavaScript framework for effortlessly building an API with a [self-wri
 - [Settings](#settings)
 - [Schema](#schema)
 - [Resource methods](#resource-methods)
+- [Item methods](#item-methods)
 - [Validations](#validations)
 - [Params & queries](#params--queries)
 - [Middleware](#middleware)
@@ -148,15 +149,7 @@ const settings = {
 
 Our endpoint `/people` allows HTTP method **GET** by default. In order to save a person to the database, we need to add the **POST** method to our domain resource.
 
-Resource methods are added as strings in an array on the same root as our `schema` object.
-
-The following HTTP methods are supported:
-
-- GET
-- POST
-- PUT
-- PATCH
-- DELETE
+Resource methods are added as strings in an array on the same root as our `schema` object. Valid HTTP methods are **GET** and **POST**.
 
 Before adding this to our settings, let's try to **POST**.
 
@@ -215,48 +208,61 @@ Now our first successful **POST** was made!
 
 By default only **GET** methods are allowed unless an array of `resourceMethods` have been defined. If however, you'd like an endpoint only serving **POST** requests, simply add that as the single value to the array.
 
+## Item methods
+
+In the previous example our request returned an item with an `_id`. If we wanted to access only this item in a **GET** request, we could add the `_id` as a parameter to the request: `/people/62eebccf0c5aa6efc2d8ceed`.
+
+By default the only valid HTTP method is **GET**, however if we would want other methods to be allowed we simply add them to our `itemMethods` array in a similar way as the `resourceMethods`.
+
+The main difference to think about is that resource methods take care of the domain itself, accessing `/people` in order to **GET** a list of documents or **POST** a new document. While item methods handle a mandatory parameter which is the `_id` of the document in order to **GET** that specific document or handle updates or deletions. Valid methods are:
+
+- GET
+- PUT
+- PATCH
+- DELETE
+
 ## Validations
 
 Schema keys are actual field names and in case the value is an object instead of the `type` as a string the following validation rules are can be used:
 
 <table>
   <tr>
-    <td>`type`</td>
+    <td><code>type</code></td>
     <td>
       Field data type. Required in the schema and can be one of the following:
       <ul>
-        <li>`string`</li>
-        <li>`number`</li>
-        <li>`date`</li>
-        <li>`boolean`</li>
-        <li>`objectid`</li>
-        <li>`object`</li>
-        <li>`array`</li>
+        <li><code>string</code></li>
+        <li><code>number</code></li>
+        <li><code>date</code></li>
+        <li><code>boolean</code></li>
+        <li><code>objectid</code></li>
+        <li><code>object</code></li>
+        <li><code>array</code></li>
       </ul>
     </td>
   </tr>
   <tr>
-    <td>`required`</td>
-    <td>If `true` the field is mandatory on insertion.</td>
+    <td><code>required</code></td>
+    <td>If <code>true</code> the field is mandatory on insertion.</td>
   </tr>
   <tr>
-    <td>`unique`</td>
-    <td>If `true` the value of the field must be unique within the collection.</td>
+    <td><code>unique</code></td>
+    <td>If <code>true</code> the value of the field must be unique within the collection.</td>
   </tr>
   <tr>
-    <td>`default`</td>
+    <td><code>default</code></td>
     <td>
       The default value for the field. When serving POST and PUT requests, missing fields will be assigned the
       configured default values.
     </td>
   </tr>
   <tr>
-    <td>`minLength`, `maxLength`</td>
-    <td>Minimum and maximum length allowed for `string` types.</td>
+    <td><code>minLength</code>, <code>maxLength</code></td>
+    <td>Minimum and maximum length allowed for <code>string</code> types.</td>
   </tr>
   <tr>
-    <td>`min`, `max`</td>
-    <td>Minimum and maximum values allowed for `number` types.</td>
+    <td><code>min</code>, <code>max</code></td>
+    <td>Minimum and maximum values allowed for <code>number</code> types.</td>
   </tr>
 </table>
 
