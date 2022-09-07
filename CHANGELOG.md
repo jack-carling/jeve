@@ -1,3 +1,10 @@
+## 0.2.1 (2022-09-07)
+
+### Features
+
+- Added handling of `itemMethods` in UI
+- Basic overview of schema and validations in UI
+
 ## 0.2.0 (2022-09-04)
 
 ### Breaking changes
