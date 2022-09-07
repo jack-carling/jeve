@@ -1,6 +1,6 @@
 {
   "name": "jeve",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Quick way to REST",
   "main": "lib/index.js",
   "scripts": {

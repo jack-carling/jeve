@@ -421,4 +421,6 @@ jeve.get('/greeting/:id', async (req, res) => {
 
 ## Self-written documentation
 
-Jeve will dynamically create it's own documentation and the UI is accessible at `/docs` in the browser. The documentation contains all available routes in the `settings` object and will show which resource methods they're accessible by. A basic view of the schema is available which will be improved upon in future versions of Jeve.
+Jeve will dynamically create it's own documentation and the UI is accessible at `/docs` in the browser. The documentation contains all available routes in the `settings` object and will show which resource and item methods they're accessible by. The accordion contains the `schema` object, an overview of keys and validations.
+
+![](https://user-images.githubusercontent.com/72305598/188952457-6b0a5e6b-03e5-4748-a372-a134293ea833.png)
