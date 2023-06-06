@@ -108,3 +108,6 @@ dist
 
 # Dev
 docs/
+
+# PyCharm
+.idea

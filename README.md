@@ -12,18 +12,18 @@ Jeve is a JavaScript framework for effortlessly building an API with a [self-wri
 
 ## Table of contents
 
-- [Install](#install)
-- [Quick start](#quick-start)
-- [Settings](#settings)
-- [Schema](#schema)
-- [Resource methods](#resource-methods)
-- [Item methods](#item-methods)
-- [Validations](#validations)
-- [Params & queries](#params--queries)
-- [Middleware](#middleware)
-- [Custom routes](#custom-routes)
-- [Accessing models](#accessing-models)
-- [Self-written documentation](#self-written-documentation)
+-   [Install](#install)
+-   [Quick start](#quick-start)
+-   [Settings](#settings)
+-   [Schema](#schema)
+-   [Resource methods](#resource-methods)
+-   [Item methods](#item-methods)
+-   [Validations](#validations)
+-   [Params & queries](#params--queries)
+-   [Middleware](#middleware)
+-   [Custom routes](#custom-routes)
+-   [Accessing models](#accessing-models)
+-   [Self-written documentation](#self-written-documentation)
 
 ## Install
 
@@ -36,16 +36,16 @@ $ npm install jeve
 Jeve runs on port 5000 and uses `mongodb://localhost` as the default MongoDB connection string URI. Presuming that the database is running locally on the default port the following code is the bare minimum to get the API up and running:
 
 ```javascript
-const Jeve = require('jeve');
+const Jeve = require('jeve')
 
 const settings = {
-  domain: {
-    people: {},
-  },
-};
+    domain: {
+        people: {},
+    },
+}
 
-const jeve = new Jeve(settings);
-jeve.run();
+const jeve = new Jeve(settings)
+jeve.run()
 ```
 
 That's all it takes for the API to go live with an endpoint. We can now try to **GET** `/people`.
@@ -70,11 +70,11 @@ If we would want to run Jeve on port 5100 instead for example:
 
 ```javascript
 const settings = {
-  domain: {
-    people: {},
-  },
-  port: 5100,
-};
+    domain: {
+        people: {},
+    },
+    port: 5100,
+}
 ```
 
 ## Schema
@@ -83,21 +83,21 @@ Jeve will automatically create Mongoose Models based on a `schema` object under 
 
 ```javascript
 const settings = {
-  domain: {
-    people: {
-      schema: {
-        name: 'string',
-        age: 'number',
-      },
+    domain: {
+        people: {
+            schema: {
+                name: 'string',
+                age: 'number',
+            },
+        },
     },
-  },
-};
+}
 ```
 
 Types can be written directly as a string:
 
 ```javascript
-name: 'string';
+name: 'string'
 ```
 
 Or as an object with the `type` key:
@@ -119,30 +119,30 @@ name: {
 
 The following types are supported:
 
-- string
-- number
-- date
-- boolean
-- objectid
-- object
-- array
+-   string
+-   number
+-   date
+-   boolean
+-   objectid
+-   object
+-   array
 
 We now have a `settings` object which looks like this:
 
 ```javascript
 const settings = {
-  domain: {
-    people: {
-      schema: {
-        name: {
-          type: 'string',
-          required: true,
+    domain: {
+        people: {
+            schema: {
+                name: {
+                    type: 'string',
+                    required: true,
+                },
+                age: 'number',
+            },
         },
-        age: 'number',
-      },
     },
-  },
-};
+}
 ```
 
 ## Resource methods
@@ -216,10 +216,10 @@ By default the only valid HTTP method is **GET**, however if we would want other
 
 The main difference to think about is that resource methods take care of the domain itself, accessing `/people` in order to **GET** a list of documents or **POST** a new document. While item methods handle a mandatory parameter which is the `_id` of the document in order to **GET** that specific document or handle updates or deletions. Valid methods are:
 
-- GET
-- PUT
-- PATCH
-- DELETE
+-   GET
+-   PUT
+-   PATCH
+-   DELETE
 
 ## Validations
 
@@ -379,9 +379,9 @@ In our middleware function `checkIfAdult`, we would simply add the value to it. 
 
 ```javascript
 function checkIfAdult(req, res, next) {
-  const age = req.body?.age;
-  if (age) req.body.isAdult = age >= 18;
-  next();
+    const age = req.body?.age
+    if (age) req.body.isAdult = age >= 18
+    next()
 }
 ```
 
@@ -401,8 +401,8 @@ A simple example of a `/greeting` route that returns the text `Hello World!`:
 
 ```javascript
 jeve.get('/greeting', (req, res) => {
-  res.send('Hello World!');
-});
+    res.send('Hello World!')
+})
 ```
 
 If `greeting` exists in our `domain` object, the custom route will be skipped and not initialized due to conflict and a message will be shown in the console. However, if the path is deeper, for example `/greeting/swedish`, the custom route will be created.
@@ -413,10 +413,10 @@ Every model that's dynamically created by Jeve is accessible from the `jeve.mode
 
 ```javascript
 jeve.get('/greeting/:id', async (req, res) => {
-  const { id } = req.params;
-  const person = await jeve.model('people').findOne({ _id: id });
-  res.send(`Hello ${person.name}`);
-});
+    const { id } = req.params
+    const person = await jeve.model('people').findOne({ _id: id })
+    res.send(`Hello ${person.name}`)
+})
 ```
 
 ## Self-written documentation
